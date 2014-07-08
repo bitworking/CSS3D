@@ -25,5 +25,13 @@ engine.setScene(scene);
 engine.update().render();
 ```
 
+### TODO
+* Collision detection
+* Build scene from json
+* Depth cueing
+* Animation system
+* Use textures/uvw coordinates from obj file
+* Billboard element
+
 ### More infos
 http://css3d.bitworking.de/
