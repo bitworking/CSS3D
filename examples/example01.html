@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title></title>
+    <script src="../release/css3d.min.js"></script>    
+
+    <style>
+    body {        
+        margin: 0;
+        font-family: sans-serif;
+    }
+    
+    #container {
+        width: 500px;
+        height: 500px;
+        margin: auto auto;
+        margin-top: 300px;
+        position: relative;
+    }
+    
+    .css3 {
+        background-image: url('../textures/css3_logo.png');
+        width: 200px;
+        height: 500px;
+        -webkit-box-shadow: 0px 19px 25px 0px rgba(50, 50, 50, 0.32);
+        -moz-box-shadow:    0px 19px 25px 0px rgba(50, 50, 50, 0.32);
+        box-shadow:         0px 19px 25px 0px rgba(50, 50, 50, 0.32);
+    }
+    
+    .css3.css3-right, .css3.css3-left {
+        background-position: 200px 0px;        
+    }
+
+    #css3-font {
+        width: 300px;
+        height: 99px;
+        background-image: url('../textures/css3_logo02.png');
+    }
+
+    </style>
+    </head>
+    <body>
+        
+        <div id="container">
+            <div id="css3-font"></div>
+        </div>
+
+        <script>
+ 
+        // init engine and scene
+        var engine = new css3d(document.getElementById('container'));
+        var scene = new css3d.scene();
+        
+        // create css3 cuboid
+        var css3 = css3d.elementFactory.cuboid(document.getElementById('container'), scene, 200, 500, 200, null, 'css3', false, true, false);
+        css3.setRotationXYZ(0, -(Math.PI/4), 0);
+        css3.setScale(1.5, 1, 1.5);
+        
+        // create css3 font
+        var css3Font = new css3d.element(document.getElementById('css3-font'));
+        css3Font.shading = false;
+        css3Font.setTranslation(0, -350, 0);        
+        scene.addElement(css3Font);
+        
+        // add scene to engine
+        engine.setScene(scene);
+        
+        if (!engine.browserSupports3d) {
+            alert('This browser does not support CSS 3D');
+        }        
+        
+        var axis = new css3d.vector3(0, 1, 0).normalize();
+        var rotation = -Math.PI/4;
+        var rotation02 = 0;
+        
+        engine.onRender = updateScene;
+        engine.startRender();        
+
+        function updateScene(deltaTime)
+        {          
+            css3.setRotation(axis, rotation);
+            css3Font.setRotationXYZ(0, rotation02, 0);
+            
+            rotation -= 0.04;
+            rotation = rotation % (Math.PI*2);
+            
+            rotation02 += 0.04;
+            rotation02 = rotation02 % (Math.PI*2);
+        }
+
+        </script>
+
+    </body>
+</html>

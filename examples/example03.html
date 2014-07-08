@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title></title>
+    <script src="../release/css3d.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <style>
+    body {        
+        margin: 0;
+        font-family: sans-serif;
+    }
+    
+    #container {
+        width: 960px;
+        margin: 0 auto;
+        background-color: #ccc;
+    }
+    
+    #header {
+        height: 100px;
+        background-color: #999;
+        padding: 10px;
+    }
+    
+    #button-next {
+        padding: 5px;
+        background-color: #ccc;
+        text-decoration: none;
+        color: #333;
+    }
+    
+    #button-next:hover {
+        background-color: #f0f0f0;
+    }
+
+    #slider {
+        height: 300px;
+        width: 960px;        
+        position: relative;        
+    }
+    
+    .slider {
+        width: 960px;
+        height: 300px;        
+    }
+
+    #footer {
+        height: 100px;
+        background-color: #999;
+    }
+
+    </style>
+    </head>
+    <body>
+        
+        <div id="container">
+            
+            <div id="header">                
+                <a id="button-next" href="#">Next</a>
+            </div>
+            
+            <div id="slider">                
+                <img src="http://placekitten.com/960/300?image=1">
+                <img src="http://placekitten.com/960/300?image=2">
+                <img src="http://placekitten.com/960/300?image=3">
+                <img src="http://placekitten.com/960/300?image=4">
+                <img src="http://placekitten.com/960/300?image=5">
+                <img src="http://placekitten.com/960/300?image=6">
+                <img src="http://placekitten.com/960/300?image=7">
+                <img src="http://placekitten.com/960/300?image=8">
+            </div>
+            
+            <div id="footer"></div>
+        </div>
+
+        <script>
+            
+        var width = $('#slider').width();
+        var height = $('#slider').height();
+    
+        // init engine
+        var engine = new css3d(document.getElementById('slider'));
+        var scene = new css3d.scene();
+        var slider = css3d.elementFactory.cuboid(document.getElementById('slider'), scene, width, height, width, null, 'slider', true, true, false);
+        engine.setScene(scene);
+        
+        if (!engine.browserSupports3d) {
+            alert('This browser does not support CSS 3D');
+        }
+
+        // buttons
+        $('#button-next').on('click', function(){
+            rotateToNextImage();
+            return false;
+        });
+        
+        var sideClasses = [
+            '.slider.slider-front',
+            '.slider.slider-right',
+            '.slider.slider-back',            
+            '.slider.slider-left',
+        ];
+        var currentSide = -1;
+     
+        // grab images
+        var currentImage = -1;
+        var images = $('#slider img').css('display', 'none').get();
+  
+        // lerp vars
+        var t = 0;
+        var lerpFunction;
+        var rotationFromY = -(Math.PI/2);
+        var rotationToY = 0;
+        var axis = new css3d.vector3(0, 1, 0).normalize();
+        
+        // init slider images
+        $(getNextSideClass()).css('background-image', 'url('+getNextImageSource()+')');        
+        
+        engine.onRender = updateScene;       
+        
+        function rotateToNextImage()
+        {
+            $(getNextSideClass()).css('background-image', 'url('+getNextImageSource()+')');
+            rotationFromY += (Math.PI/2);
+            rotationToY += (Math.PI/2);
+            t = 0;
+            engine.startRender();
+        }
+
+        function updateScene(deltaTime)
+        {          
+            var rotationY = css3d.math.lerp(rotationFromY, rotationToY, css3d.math.interpolation.berp(t));            
+            slider.setRotation(axis, -rotationY);
+            
+            if (t >= 1) {                
+                slider.setRotation(axis, -rotationToY);
+                engine.update().render();
+                engine.stopRender();
+                t = 0;
+                return;
+            }           
+
+            t += (1/60/2 * deltaTime);            
+        }
+        
+        function getNextImageSource()
+        {            
+            if (images.length - 1 <= currentImage) {
+                currentImage = 0;                
+            }
+            else {
+                currentImage++;
+            }
+            return images[currentImage].src;
+        }
+        
+        function getNextSideClass()
+        {
+            if (sideClasses.length - 1 <= currentSide) {
+                currentSide = 0;                
+            }
+            else {
+                currentSide++;
+            }
+            return sideClasses[currentSide];
+        }
+
+        </script>
+
+    </body>
+</html>

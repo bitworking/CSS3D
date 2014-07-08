@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: css3d.ajax.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: css3d.ajax.js</h1>
+
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * CSS 3D engine
+ *
+ * @category    css3d
+ * @package     css3d.ajax
+ * @author      Jan Fischer, bitWorking &lt;info@bitworking.de>
+ * @copyright   2014 Jan Fischer
+ * @license     http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
+
+/**
+ * 
+ * @namespace
+ */
+css3d.ajax = (function()
+{
+
+    var _private = {};
+    var _public = {};
+
+    _private.x = function()
+    {
+        try {
+            return new XMLHttpRequest();
+        }
+        // IE
+        catch (e) {
+            try {
+                return new ActiveXObject("Msxml2.XMLHTTP");
+            }
+            catch (e) {
+                try {
+                    return new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                catch (e) {
+                    return false;
+                }
+            }
+        }
+        return false;
+    };
+
+    _private.statechange = function(data)
+    {
+        if (data.xmlHttp.readyState == 4) {
+            if (data.responsefnc != null) {
+                data.responsefnc(data.xmlHttp.responseText);
+            }
+        }
+        return;
+    };
+
+    _private.active = function(data)
+    {
+        switch (data.xmlHttp.readyState) {
+            case 1: case 2: case 3:
+            return true;
+            break;
+            // case 4 and 0
+            default:
+            return false;
+            break;
+        }
+    };
+
+    /**
+     * 
+     * @function send
+     * @memberof! css3d.ajax
+     * @param {String} url
+     * @param {Function} responsefnc
+     * @param {String} method
+     * @param {String} arguments
+     * @param {Number} timeout
+     * @param {Boolean} cache
+     */
+    _public.send = function(url, responsefnc, method, arguments, timeout, cache)
+    {
+        var xmlHttp = _private.x();
+        if (!xmlHttp) {
+            throw new Error('No ajax support');
+        }
+
+        var timeout = timeout || 5000;
+        var errorfnc = function(){throw new Error('Ajax error');}
+
+        if (!cache) {
+            var now = new Date();
+            var time = now.getTime();
+            if (method == 'GET') {
+                url = url + '&amp;__t__=' + time;
+            }
+            else if (method == 'POST') {
+                arguments = arguments + '&amp;__t__=' + time;
+            }
+        }
+
+        var data = {};
+        data.xmlHttp = xmlHttp;
+        data.responsefnc = responsefnc;
+        data.errorfnc = errorfnc;
+
+        xmlHttp.onreadystatechange = function(){_private.statechange(data)};
+        xmlHttp.open(method, url, true);
+        if (method == 'POST') {
+            xmlHttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        }
+        xmlHttp.send(arguments);
+
+        data.timeout = window.setTimeout(
+            function()
+            {
+                if (_private.active(data)) {
+                    data.xmlHttp.abort();
+                    throw new Error('Ajax timeout');
+                    return;
+                }
+            },
+            timeout
+        );
+    };
+
+    /**
+     * 
+     * @function get
+     * @memberof! css3d.ajax
+     * @param {String} url
+     * @param {Function} responsefnc
+     * @param {Number} timeout
+     */
+    _public.get = function(url, responsefnc, timeout)
+    {
+        _public.send(url, responsefnc, 'GET', null, timeout);
+    };
+
+    /**
+     * Synchronous Get
+     * 
+     * @function getS
+     * @memberof! css3d.ajax
+     * @param {String} url
+     * @returns {String}
+     */
+    _public.getS = function(url)
+    {
+        var xmlHttp = _private.x();
+        if (!xmlHttp) {
+            throw new Error('No ajax support');
+        }
+        xmlHttp.open('GET', url, false);
+        xmlHttp.send(null);
+        return xmlHttp.responseText;
+    };
+
+    /**
+     * 
+     * @function post
+     * @memberof! css3d.ajax
+     * @param {String} url
+     * @param {Function} responsefnc
+     * @param {String} arguments
+     * @param {Number} timeout     
+     */
+    _public.post = function(url, responsefnc, arguments, timeout)
+    {
+        _public.send(url, responsefnc, 'POST', arguments, timeout)
+    };
+
+    /**
+     * Synchronous Post
+     * 
+     * @function postS
+     * @memberof! css3d.ajax
+     * @param {String} url
+     * @param {String} arguments
+     * @returns {String}
+     */
+    _public.postS = function(url, arguments)
+    {
+        var xmlHttp = _private.x();
+        if (!xmlHttp) {
+            throw new Error('No ajax support');
+        }
+        xmlHttp.open('POST', url, false);
+        xmlHttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xmlHttp.send(arguments);
+        return xmlHttp.responseText;
+    };
+
+    return _public;
+
+}());</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="css3d.html">css3d</a></li><li><a href="css3d.camera.html">camera</a></li><li><a href="css3d.element.html">element</a></li><li><a href="css3d.quaternion.html">quaternion</a></li><li><a href="css3d.scene.html">scene</a></li><li><a href="css3d.vector3.html">vector3</a></li><li><a href="css3d.vector4.html">vector4</a></li></ul><h3>Namespaces</h3><ul><li><a href="css3d.ajax.html">ajax</a></li><li><a href="css3d.elementFactory.html">elementFactory</a></li><li><a href="css3d.math.html">math</a></li><li><a href="css3d.math.interpolation.html">interpolation</a></li><li><a href="css3d.matrix4.html">matrix4</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Tue Jul 08 2014 18:27:20 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
