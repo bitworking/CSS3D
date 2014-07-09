@@ -44,7 +44,7 @@ var css3d = (function(document)
         this._renderId = null;
         this._lastCalledTime = 0;
 
-        this.version = '1.0';
+        this.version = '0.9';
         this.browserSupports3d = this._init();
         this.onRender = null;        
     };
@@ -1748,26 +1748,38 @@ css3d.elementFactory = {
 
         var backDiv = document.createElement('div');
         backDiv.style.position = 'absolute';
+        backDiv.style.width = size+'px';
+        backDiv.style.height = size+'px';
         container.appendChild(backDiv);
 
         var frontDiv = document.createElement('div');
         frontDiv.style.position = 'absolute';
+        frontDiv.style.width = size+'px';
+        frontDiv.style.height = size+'px';
         container.appendChild(frontDiv);
 
         var leftDiv = document.createElement('div');
         leftDiv.style.position = 'absolute';
+        leftDiv.style.width = size+'px';
+        leftDiv.style.height = size+'px';
         container.appendChild(leftDiv);
 
         var rightDiv = document.createElement('div');
         rightDiv.style.position = 'absolute';
+        rightDiv.style.width = size+'px';
+        rightDiv.style.height = size+'px';
         container.appendChild(rightDiv);
 
         var topDiv = document.createElement('div');
         topDiv.style.position = 'absolute';
+        topDiv.style.width = size+'px';
+        topDiv.style.height = size+'px';
         container.appendChild(topDiv);
 
         var bottomDiv = document.createElement('div');
         bottomDiv.style.position = 'absolute';
+        bottomDiv.style.width = size+'px';
+        bottomDiv.style.height = size+'px';
         container.appendChild(bottomDiv);
 
         if (id) {
@@ -1876,27 +1888,39 @@ css3d.elementFactory = {
 
         var backDiv = document.createElement('div');
         backDiv.style.position = 'absolute';
+        backDiv.style.width = width+'px';
+        backDiv.style.height = height+'px';
         container.appendChild(backDiv);
 
         var frontDiv = document.createElement('div');
         frontDiv.style.position = 'absolute';
+        frontDiv.style.width = width+'px';
+        frontDiv.style.height = height+'px';
         container.appendChild(frontDiv);
 
         var leftDiv = document.createElement('div');
         leftDiv.style.position = 'absolute';
+        leftDiv.style.width = depth+'px';
+        leftDiv.style.height = height+'px';
         container.appendChild(leftDiv);
 
         var rightDiv = document.createElement('div');
         rightDiv.style.position = 'absolute';
+        rightDiv.style.width = depth+'px';
+        rightDiv.style.height = height+'px';
         container.appendChild(rightDiv);
 
         if (addTopAndBottom) {
             var topDiv = document.createElement('div');
             topDiv.style.position = 'absolute';
+            topDiv.style.width = width+'px';
+            topDiv.style.height = depth+'px';
             container.appendChild(topDiv);
 
             var bottomDiv = document.createElement('div');
             bottomDiv.style.position = 'absolute';
+            bottomDiv.style.width = width+'px';
+            bottomDiv.style.height = depth+'px';
             container.appendChild(bottomDiv);
         }
 
@@ -2242,32 +2266,44 @@ css3d.elementFactory = {
      */
     skybox : function(container, scene, size, id, className)
     {
-        var translation = size/2;
+        var translation = (size-2)/2;
 
         var elementGroup = new css3d.element();
 
         var backDiv = document.createElement('div');
         backDiv.style.position = 'absolute';
+        backDiv.style.width = size+'px';
+        backDiv.style.height = size+'px';
         container.appendChild(backDiv);
 
         var frontDiv = document.createElement('div');
         frontDiv.style.position = 'absolute';
+        frontDiv.style.width = size+'px';
+        frontDiv.style.height = size+'px';
         container.appendChild(frontDiv);
 
         var leftDiv = document.createElement('div');
         leftDiv.style.position = 'absolute';
+        leftDiv.style.width = size+'px';
+        leftDiv.style.height = size+'px';
         container.appendChild(leftDiv);
 
         var rightDiv = document.createElement('div');
         rightDiv.style.position = 'absolute';
+        rightDiv.style.width = size+'px';
+        rightDiv.style.height = size+'px';
         container.appendChild(rightDiv);
 
         var topDiv = document.createElement('div');
         topDiv.style.position = 'absolute';
+        topDiv.style.width = size+'px';
+        topDiv.style.height = size+'px';
         container.appendChild(topDiv);
 
         var bottomDiv = document.createElement('div');
         bottomDiv.style.position = 'absolute';
+        bottomDiv.style.width = size+'px';
+        bottomDiv.style.height = size+'px';
         container.appendChild(bottomDiv);
 
         if (id) {

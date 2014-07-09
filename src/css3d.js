@@ -44,7 +44,7 @@ var css3d = (function(document)
         this._renderId = null;
         this._lastCalledTime = 0;
 
-        this.version = '1.0';
+        this.version = '0.9';
         this.browserSupports3d = this._init();
         this.onRender = null;        
     };

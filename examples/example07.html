@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title></title>
+    <script src="../release/css3d.min.js"></script>
+    
+
+    <style>
+    body {        
+        margin: 0;
+        font-family: sans-serif;
+        overflow: hidden;
+    }
+    
+    #container {
+        width: 500px;
+        height: 500px;
+        margin: auto auto;
+        margin-top: 300px;
+        position: relative;
+    }    
+    
+    .skybox {
+        background-image: url('../textures/skybox.png');
+        position: absolute;        
+    }
+    
+    .skybox.skybox-back {
+        background-position: -1024px -1024px;
+    }
+
+    .skybox.skybox-front {
+        background-position: -3072px -1024px;
+    }
+
+    .skybox.skybox-left {
+        background-position: 0px -1024px;
+    }
+
+    .skybox.skybox-right {
+        background-position: -2048px -1024px;
+    }
+    
+    .skybox.skybox-top {
+        background-position: -1024px 0px;
+    }
+    
+    .skybox.skybox-bottom {
+        background-position: -1024px -2048px;
+    }
+    
+    
+    </style>
+    </head>
+    <body>
+        
+        <div id="container">
+            
+        </div>
+
+        <script>
+ 
+        var container = document.getElementById('container');
+ 
+        // init engine and scene
+        var engine = new css3d(container);
+        var scene = new css3d.scene();  
+        scene.getCamera().setTranslation(0, 0, 0);
+                
+        var skybox = css3d.elementFactory.skybox(container, scene, 1024, null, 'skybox');
+                
+        // add scene to engine
+        engine.setScene(scene);
+        
+        if (!engine.browserSupports3d) {
+            alert('This browser does not support CSS 3D');
+        }     
+        
+        var axis = new css3d.vector3(0.2, 1, 0).normalize();
+        var angle = 0;
+        
+        var engineDeltaTime = 0;
+     
+        engine.onRender = updateScene;
+        engine.update().render();
+        
+
+        function updateScene(deltaTime)
+        {          
+            engineDeltaTime = deltaTime;
+        }
+        
+        /* mouse events */
+        
+        var cameraRotationX = 0;
+        var cameraRotationY = 0;
+        var cameraRotationAxis = new css3d.vector3(0, -1, 0).normalize();
+
+        var lastXY = null;
+
+        document.onmousedown = function(evt)
+        {
+            lastXY = null;
+            document.addEventListener('mousemove', onMouseMove);
+            engine.startRender();
+        };
+
+        document.onmouseup = function(evt)
+        {
+            document.removeEventListener('mousemove', onMouseMove);
+            engine.stopRender();
+        };
+
+        function onMouseMove(evt)
+        {
+            var x = evt.pageX;
+            var y = evt.pageY;
+            var relX, relY;
+
+            if (null == lastXY) {
+                lastXY = [x, y];
+                return;
+            }
+
+            relX = x - lastXY[0];
+            relY = lastXY[1] - y;
+
+            cameraRotationX += (relY/100 * engineDeltaTime);
+            cameraRotationY += (relX/100 * engineDeltaTime);
+ 
+            scene.getCamera().setRotationXYZ(-cameraRotationX, -cameraRotationY, 0);            
+            
+            lastXY = [x, y];
+
+        }
+
+        </script>
+
+    </body>
+</html>

@@ -6,6 +6,10 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
     <style>
+    * {
+        /*cursor: none;*/
+    }    
+        
     body {        
         margin: 0;
         font-family: sans-serif;
@@ -175,7 +179,7 @@
 
         function updateScene(deltaTime)
         {          
-           engineDeltaTime = deltaTime;
+            engineDeltaTime = deltaTime;
             if (fpsUpdate == 60) {
                 document.getElementById('fps').innerHTML = 'FPS: '+ (deltaTimeCounter).toFixed(2);
                 fpsUpdate = 0;

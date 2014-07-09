@@ -32,6 +32,7 @@ engine.update().render();
 * Animation system
 * Use textures/uvw coordinates from obj file
 * Billboard element
+* Speed/memory optimization
 
 ### More infos
 http://css3d.bitworking.de/
