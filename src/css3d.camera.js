@@ -30,6 +30,12 @@ css3d.camera = (function()
      */
     var camera = function(x, y, z, perspective)
     {
+        /**
+         * Set the perspective value
+         * @type {Integer}
+         * @memberof! css3d.camera
+         * @instance
+         */ 
         this.perspective = perspective || 800;
 
         x = (null != x) ? x : 0;

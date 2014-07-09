@@ -44,21 +44,38 @@ var css3d = (function(document)
         this._renderId = null;
         this._lastCalledTime = 0;
 
+        /**
+         * Current version
+         * @memberof! css3d
+         * @instance
+         */
         this.version = '0.9';
+        
+        /**
+         * Browser supports CSS 3D
+         * @type {Boolean}
+         * @memberof! css3d
+         * @instance
+         */
         this.browserSupports3d = this._init();
+        
+        /**
+         * Set the render callback
+         * @type {Function}
+         * @memberof! css3d
+         * @instance
+         */
         this.onRender = null;        
     };
 
     css3d.prototype._init = function()
     {
-        if (!this._browserSupports3d()) {
-            //throw new Error('no support for 3D transform');
+        if (!this._browserSupports3d()) {            
             return false;
         }
 
         this._prefix = this._getPrefix();
-        if (null == this._prefix) {
-            //throw new Error('error while getting browser prefix');
+        if (null == this._prefix) {            
             return false;
         }
         this._initContainer();

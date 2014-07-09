@@ -28,8 +28,26 @@ css3d.vector3 = (function(css3d)
      */
     var vector3 = function(x, y, z)
     {
+        /**
+         * x value
+         * @type {Number}
+         * @memberof! css3d.vector3
+         * @instance
+         */
         this.x = x || 0;
+        /**
+         * y value
+         * @type {Number}
+         * @memberof! css3d.vector3
+         * @instance
+         */ 
         this.y = y || 0;
+        /**
+         * z value
+         * @type {Number}
+         * @memberof! css3d.vector3
+         * @instance
+         */
         this.z = z || 0;
     };
     
