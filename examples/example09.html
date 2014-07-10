@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title></title>
+    <script src="../release/css3d.js"></script>
+    
+
+    <style>
+    body {        
+        margin: 0;
+        font-family: sans-serif;
+        overflow: hidden;
+    }
+    
+    #container {
+        width: 500px;
+        height: 500px;
+        margin: auto auto;
+        margin-top: 300px;
+        position: relative;
+    }    
+    
+    .scifi {
+        
+    }
+
+    </style>
+    </head>
+    <body>
+        
+        <div id="container">
+            
+        </div>
+
+        <script>
+ 
+        // init engine and scene
+        var engine = new css3d(document.getElementById('container'));
+        var scene = new css3d.scene();
+        scene.getLight().set(-0.7, -0.7, 0).normalize();
+        scene.getCamera().setTranslation(0, 0, 0);
+                
+        // load model
+        var model = css3d.elementFactory.fromObj(
+            document.getElementById('container'),
+            scene, 
+            '../models/scifi01.obj', 
+            'scifi',    // class name
+            false,       // backface culling
+            true,       // shading
+            true,       // clockwise winding,
+            '../textures/scifi01.jpg',
+            1024
+        );
+                
+        // add scene to engine
+        engine.setScene(scene);
+        
+        if (!engine.browserSupports3d) {
+            alert('This browser does not support CSS 3D');
+        }     
+        
+        var deltaTimeCounter = 0;
+        var engineDeltaTime = 0;
+
+        engine.onRender = updateScene;
+        engine.startRender();
+
+        function updateScene(deltaTime)
+        {         
+            engineDeltaTime = deltaTime;
+            scene.getCamera().getTranslation().y = 0;
+           
+        }
+        
+        /* FPS camera *********************************************************/
+        
+        var cameraRotationX = 0;
+        var cameraRotationY = 0;
+        var cameraRotationAxis = new css3d.vector3(0, -1, 0).normalize();
+
+        /* key events */
+
+        var speed = 10;
+
+        document.onkeydown = function(evt)
+        {
+            evt = (evt) ? evt : ((event) ? event : null);
+            if (evt) {
+                var code = (evt.which) ? evt.which : evt.keyCode;
+
+                //console.log(code);
+
+                // w
+                if (code == 87) {
+                    scene.getCamera().forward(speed * engineDeltaTime);
+                }
+                // s
+                if (code == 83) {
+                    scene.getCamera().forward(-speed * engineDeltaTime);
+                }
+                // d
+                if (code == 68) {
+                    scene.getCamera().left(-speed * engineDeltaTime);
+                }
+                // a
+                if (code == 65) {
+                    scene.getCamera().left(speed * engineDeltaTime);
+                }
+
+                
+                // up
+                if (code == 38) {
+                    scene.getCamera().up(speed * engineDeltaTime);
+                }
+                // down
+                if (code == 40) {
+                    scene.getCamera().up(-speed * engineDeltaTime);
+                }
+                // left
+                if (code == 37) {
+                    cameraRotationY -= (0.2 * engineDeltaTime);
+                    scene.getCamera().setRotation(cameraRotationAxis, cameraRotationY);
+                }
+                // right
+                if (code == 39) {
+                    cameraRotationY += (0.2 * engineDeltaTime);
+                    scene.getCamera().setRotation(cameraRotationAxis, cameraRotationY);
+                }
+                
+            }
+        };
+
+        document.onkeyup = function(evt)
+        {
+            evt = (evt) ? evt : ((event) ? event : null);
+            if (evt) {
+                var code = (evt.which) ? evt.which : evt.keyCode;
+            }
+        };
+
+        /* mouse events */
+
+        var lastXY = null;
+
+        document.onmousedown = function(evt)
+        {
+            lastXY = null;
+            document.addEventListener('mousemove', onMouseMove);
+        };
+
+        document.onmouseup = function(evt)
+        {
+            document.removeEventListener('mousemove', onMouseMove);
+        };
+
+        function onMouseMove(evt)
+        {
+            var x = evt.pageX;
+            var y = evt.pageY;
+            var relX, relY;
+
+            if (null == lastXY) {
+                lastXY = [x, y];
+                return;
+            }
+
+            relX = x - lastXY[0];
+            relY = lastXY[1] - y;
+
+            cameraRotationX += (relY/100 * engineDeltaTime);
+            cameraRotationY += (relX/100 * engineDeltaTime);
+            
+            //scene.getCamera().setRotation({x:0, y:-1, z:0}, cameraRotationY);  
+            scene.getCamera().setRotationXYZ(-cameraRotationX, -cameraRotationY, 0);            
+            //scene.getCamera().setRotation({x:-1, y:0, z:0}, cameraRotationX);  
+            //scene.getCamera().setRotationXYZ(-cameraRotationX, 0, 0);
+            
+            lastXY = [x, y];
+
+        }
+
+        </script>
+
+    </body>
+</html>
