@@ -26,7 +26,7 @@ engine.update().render();
 ```
 
 ### TODO
-* Collision detection
+* ~~Collision detection~~
 * Build scene from json
 * Depth cueing
 * Animation system

@@ -49,7 +49,7 @@ var css3d = (function(document)
          * @memberof! css3d
          * @instance
          */
-        this.version = '0.9.1';
+        this.version = '0.9.2';
         
         /**
          * Browser supports CSS 3D
@@ -307,8 +307,9 @@ var css3d = (function(document)
 
         // shading
         if (element.shading) {
-            var projected = element.normal.transform(element.getTotalRotation());
-            projected = projected.toVector3().normalize();
+            //var projected = element.normal.transform(element.getTotalRotation());
+            //projected = projected.toVector3().normalize();
+            var projected = element.normalWorld;            
             var dot = Math.abs(projected.dot(this._scene.getLight())).toFixed(10);
             dot = dot * this._scene.getShadingIntensity() + (1-this._scene.getShadingIntensity());
             if (this._hasFilter) {
@@ -759,6 +760,17 @@ css3d.camera = (function()
     {        
         return css3d.matrix4.back(this._rotation).normalize();
     };
+    
+    /**
+     * 
+     * @memberof! css3d.camera
+     * @instance
+     * @returns {css3d.vector3}
+     */
+    camera.prototype.forwardVector = function()
+    {
+        return css3d.matrix4.forward(this._rotation).normalize();
+    };
 
     /**
      * Move camera forward
@@ -770,11 +782,11 @@ css3d.camera = (function()
      */
     camera.prototype.forward = function(steps)
     {
-        var backVector = this.backVector();
+        var forwardVector = this.forwardVector();
         this.setTranslation(
-            this._translation.x - (backVector.x * steps),
-            this._translation.y - (backVector.y * steps),
-            this._translation.z - (backVector.z * steps)
+            this._translation.x + (forwardVector.x * steps),
+            this._translation.y + (forwardVector.y * steps),
+            this._translation.z + (forwardVector.z * steps)
         );
         return this;
     };
@@ -1032,6 +1044,90 @@ css3d.camera = (function()
  * CSS 3D engine
  *
  * @category    css3d
+ * @package     css3d.collision
+ * @author      Jan Fischer, bitWorking <info@bitworking.de>
+ * @copyright   2014 Jan Fischer
+ * @license     http://www.opensource.org/licenses/mit-license.html  MIT License
+ */
+
+/**
+ * 
+ * @name css3d.collision
+ * @class
+ * @param {Array} elements
+ * @returns {css3d.collision}
+ */
+css3d.collision = (function()
+{
+    /**
+     * 
+     * @param {Array} elements
+     * @returns {css3d.collision}
+     */
+    var collision = function(elements)
+    {        
+        this._elements = elements;
+    }
+    
+    /**
+     * 
+     * @memberof! css3d.collision
+     * @instance
+     * @param {css3d.vector3} position
+     * @param {css3d.vector3} normal
+     * @param {Number} distance
+     * @returns {Array}
+     */
+    collision.prototype.getCollisions = function(position, normal, distance)
+    {
+        var collisionPoint = new css3d.vector3(
+            position.x + (normal.x * distance),
+            position.y + (normal.y * distance),
+            position.z + (normal.z * distance)
+        );
+
+        var elementPosition, elementDistance, elementSize, planeDistance;
+        var collisionElements = [];
+	
+        for (var i=0;i<this._elements.length;i++) {            
+            if (null == this._elements[i]._domElement) {
+                continue;
+            }    
+            
+            elementPosition = this._elements[i].getTotalTranslation();
+            elementDistance = css3d.vector3.prototype.distance(elementPosition, collisionPoint);
+            elementSize = Math.max(
+                this._elements[i]._domElement.offsetWidth / 2,
+                this._elements[i]._domElement.offsetHeight / 2
+            );
+ 
+            if (elementDistance < elementSize) {
+                elementPosition.sub(collisionPoint);
+                planeDistance = css3d.vector3.prototype.dot2(this._elements[i].normalWorld, elementPosition);
+                //console.log(planeDistance);
+                      
+                //if (planeDistance <= 0) {
+                if (Math.abs(planeDistance) < distance) { // normally <= 0, but if the steps are too large the collision is missed
+                    //this._elements[i]._domElement.style.border = '1px solid red';                    
+                    collisionElements.push(this._elements[i]);
+                }                
+            }
+            else {
+                //this._elements[i]._domElement.style.border = 'none';
+            }            
+        }        
+        return collisionElements;        
+    }
+
+    return collision;
+}());
+
+
+
+/**
+ * CSS 3D engine
+ *
+ * @category    css3d
  * @package     css3d.element
  * @author      Jan Fischer, bitWorking <info@bitworking.de>
  * @copyright   2014 Jan Fischer
@@ -1084,6 +1180,7 @@ css3d.element = (function()
         this.backfaceCullingDirty = false;
         this.worldView = null;
         this.normal = new css3d.vector3(0, 0, 1);
+        this.normalWorld = new css3d.vector3(0, 0, 1);
         
         /**
          * Indicates if the element inherits the scaling from an parent element.
@@ -1478,6 +1575,17 @@ css3d.element = (function()
     {
         return this._translation;
     };
+    
+    /**
+     * 
+     * @memberof! css3d.element
+     * @instance
+     * @returns {css3d.vector3}
+     */
+    element.prototype.getTotalTranslation = function()
+    {
+        return new css3d.vector3(this._world[3], this._world[7], this._world[11]);
+    };
 
     /**
      * 
@@ -1488,6 +1596,17 @@ css3d.element = (function()
     element.prototype.backVector = function()
     {
         return css3d.matrix4.back(this._world).normalize();        
+    };
+    
+    /**
+     * 
+     * @memberof! css3d.element
+     * @instance
+     * @returns {css3d.vector3}
+     */
+    element.prototype.forwardVector = function()
+    {
+        return css3d.matrix4.forward(this._world).normalize();        
     };
 
     /**
@@ -1500,11 +1619,11 @@ css3d.element = (function()
      */
     element.prototype.forward = function(steps)
     {
-        var backVector = this.backVector();
+        var forwardVector = this.forwardVector();
         this.setTranslation(
-            this._translation.x - (backVector.x * steps),
-            this._translation.y - (backVector.y * steps),
-            this._translation.z - (backVector.z * steps)
+            this._translation.x + (forwardVector.x * steps),
+            this._translation.y + (forwardVector.y * steps),
+            this._translation.z + (forwardVector.z * steps)
         );
         return this;
     };
@@ -1750,6 +1869,11 @@ css3d.element = (function()
                 this._parent.update(); // this seems to be needed if you only call engine.update().render()
                 this._world = css3d.matrix4.multiply(this._parent.getWorldMatrix(), this._world);
             }
+            
+            // transform normal
+            // isn't it always the forward vector?
+            this.normalWorld = this.normal.transform(this.getTotalRotation());
+            this.normalWorld = this.normalWorld.toVector3().normalize();
 
             this._isDirty = false;
 
@@ -2948,6 +3072,16 @@ css3d.matrix4 = {
     {
         return new css3d.vector3(matrix[2], matrix[6], matrix[10]);
     },
+    
+    /**
+     * 
+     * @param {Array} matrix
+     * @returns {css3d.vector3}
+     */
+    forward : function(matrix)
+    {
+        return new css3d.vector3(-matrix[2], -matrix[6], -matrix[10]);
+    },
 
     /**
      * 
@@ -3842,6 +3976,11 @@ css3d.vector3 = (function(css3d)
     vector3.prototype.isZero = function()
     {
         return (this.x == 0 && this.y == 0 && this.z == 0);
+    };
+    
+    vector3.prototype.distance = function(a, b)
+    {
+        return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2) + Math.pow(a.z - b.z, 2));
     };
 
     return vector3;
