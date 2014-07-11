@@ -49,7 +49,7 @@ var css3d = (function(document)
          * @memberof! css3d
          * @instance
          */
-        this.version = '0.9';
+        this.version = '0.9.1';
         
         /**
          * Browser supports CSS 3D
