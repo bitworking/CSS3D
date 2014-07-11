@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: math</title>
+    <title>JSDoc: Class: collision</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Namespace: math</h1>
+    <h1 class="page-title">Class: collision</h1>
 
     
 
@@ -29,7 +29,7 @@
     <h2>
         <span class="ancestors"><a href="css3d.html">css3d</a>.</span>
     
-    math
+    collision
     </h2>
     
 </header>
@@ -40,8 +40,70 @@
 
     
         
+<dt>
+    <h4 class="name" id="collision"><span class="type-signature"></span>new collision<span class="signature">(elements)</span><span class="type-signature"> &rarr; {<a href="css3d.collision.html">css3d.collision</a>}</span></h4>
+
+    
+</dt>
+<dd>
+
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
 
         
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>elements</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
 <dl class="details">
     
 
@@ -64,7 +126,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="css3d.math.js.html">css3d.math.js</a>, <a href="css3d.math.js.html#line15">line 15</a>
+        <a href="css3d.collision.js.html">css3d.collision.js</a>, <a href="css3d.collision.js.html#line11">line 11</a>
     </li></ul></dd>
     
 
@@ -76,7 +138,39 @@
 </dl>
 
 
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
         
+<span class="param-type"><a href="css3d.collision.html">css3d.collision</a></span>
+
+
+    </dd>
+</dl>
+
+        
+
+    
+</dd>
+
     
     </div>
 
@@ -91,13 +185,6 @@
      
 
     
-        <h3 class="subsection-title">Namespaces</h3>
-
-        <dl>
-            <dt><a href="namespaces.html#css3d.math.interpolation"><a href="css3d.math.interpolation.html">interpolation</a></a></dt>
-            <dd></dd>
-        </dl>
-    
 
     
 
@@ -107,7 +194,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="lerp"><span class="type-signature">(static) </span>lerp<span class="signature">(value1, value2, amount)</span><span class="type-signature"> &rarr; {Number}</span></h4>
+    <h4 class="name" id="getCollisions"><span class="type-signature"></span>#collision#getCollisions<span class="signature">(position, normal, distance)</span><span class="type-signature"> &rarr; {Array}</span></h4>
 
     
 </dt>
@@ -145,13 +232,13 @@
 
         <tr>
             
-                <td class="name"><code>value1</code></td>
+                <td class="name"><code>position</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type"><a href="css3d.vector3.html">css3d.vector3</a></span>
 
 
             
@@ -168,13 +255,13 @@
 
         <tr>
             
-                <td class="name"><code>value2</code></td>
+                <td class="name"><code>normal</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type"><a href="css3d.vector3.html">css3d.vector3</a></span>
 
 
             
@@ -191,163 +278,7 @@
 
         <tr>
             
-                <td class="name"><code>amount</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">0-1</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-    
-
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="css3d.math.js.html">css3d.math.js</a>, <a href="css3d.math.js.html#line24">line 24</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Number</span>
-
-
-    </dd>
-</dl>
-
-        
-
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="randomInteger"><span class="type-signature">(static) </span>randomInteger<span class="signature">(min, max)</span><span class="type-signature"> &rarr; {Integer}</span></h4>
-
-    
-</dt>
-<dd>
-
-    
-
-    
-
-    
-
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>min</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>max</code></td>
+                <td class="name"><code>distance</code></td>
             
 
             <td class="type">
@@ -394,7 +325,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="css3d.math.js.html">css3d.math.js</a>, <a href="css3d.math.js.html#line46">line 46</a>
+        <a href="css3d.collision.js.html">css3d.collision.js</a>, <a href="css3d.collision.js.html#line39">line 39</a>
     </li></ul></dd>
     
 
@@ -428,163 +359,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Integer</span>
-
-
-    </dd>
-</dl>
-
-        
-
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="randomNumber"><span class="type-signature">(static) </span>randomNumber<span class="signature">(min, max)</span><span class="type-signature"> &rarr; {Number}</span></h4>
-
-    
-</dt>
-<dd>
-
-    
-
-    
-
-    
-
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>min</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>max</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-    
-
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="css3d.math.js.html">css3d.math.js</a>, <a href="css3d.math.js.html#line35">line 35</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Number</span>
+<span class="param-type">Array</span>
 
 
     </dd>
