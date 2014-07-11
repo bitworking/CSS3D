@@ -44,21 +44,38 @@ var css3d = (function(document)
         this._renderId = null;
         this._lastCalledTime = 0;
 
-        this.version = '0.9';
+        /**
+         * Current version
+         * @memberof! css3d
+         * @instance
+         */
+        this.version = '0.9.1';
+        
+        /**
+         * Browser supports CSS 3D
+         * @type {Boolean}
+         * @memberof! css3d
+         * @instance
+         */
         this.browserSupports3d = this._init();
+        
+        /**
+         * Set the render callback
+         * @type {Function}
+         * @memberof! css3d
+         * @instance
+         */
         this.onRender = null;        
     };
 
     css3d.prototype._init = function()
     {
-        if (!this._browserSupports3d()) {
-            //throw new Error('no support for 3D transform');
+        if (!this._browserSupports3d()) {            
             return false;
         }
 
         this._prefix = this._getPrefix();
-        if (null == this._prefix) {
-            //throw new Error('error while getting browser prefix');
+        if (null == this._prefix) {            
             return false;
         }
         this._initContainer();
@@ -617,6 +634,12 @@ css3d.camera = (function()
      */
     var camera = function(x, y, z, perspective)
     {
+        /**
+         * Set the perspective value
+         * @type {Integer}
+         * @memberof! css3d.camera
+         * @instance
+         */ 
         this.perspective = perspective || 800;
 
         x = (null != x) ? x : 0;
@@ -1051,12 +1074,39 @@ css3d.element = (function()
         this._isTranslated = false;
         this._isPivotChanged = false;
         
+        /**
+         * Set shading on/off
+         * @type {Boolean}
+         * @memberof! css3d.element
+         * @instance
+         */
         this.shading = true;
         this.backfaceCullingDirty = false;
         this.worldView = null;
         this.normal = new css3d.vector3(0, 0, 1);
+        
+        /**
+         * Indicates if the element inherits the scaling from an parent element.
+         * @type {Boolean}
+         * @memberof! css3d.element
+         * @instance
+         */
         this.inheritScaling = false;
+        
+        /**
+         * Element will get centered in the container element. This makes it easier to position it in 3D space.
+         * @type {Boolean}
+         * @memberof! css3d.element
+         * @instance
+         */
         this.autoCenter = true;
+        
+        /**
+         * Set the custom zIndex. Only used if browser doesn't support preserve-3d (IE10)
+         * @type {Integer}
+         * @memberof! css3d.element
+         * @instance
+         */
         this.zIndex = null;
     };
 
@@ -2395,15 +2445,19 @@ css3d.elementFactory = {
      * @param {Boolean|null} backfaceCulling
      * @param {Boolean|null} shading
      * @param {Boolean|null} clockwise  The face winding direction
+     * @param {String} textureFile  Path to texture file
+     * @param {Integer} textureSize Texture size (The texture has to be a square)
      * @returns {css3d.element} This is the parent element 
      */
-    fromObj : function(container, scene, objFile, className, backfaceCulling, shading, clockwise)
+    fromObj : function(container, scene, objFile, className, backfaceCulling, shading, clockwise, textureFile, textureSize)
     {
 
         className = className || 'model';
         backfaceCulling = (backfaceCulling == null) ? true : backfaceCulling;
         shading = (shading == null) ? true : shading;
         clockwise = (clockwise == null) ? false : clockwise;
+        textureFile = (textureFile == null) ? '' : textureFile;
+        textureSize = (textureSize == null) ? 1024 : textureSize;        
 
         var objContent = css3d.ajax.getS(objFile);
 
@@ -2411,11 +2465,16 @@ css3d.elementFactory = {
         var faces = [];
         var colors = [];
         colors[0] = [204, 204, 204];
+        var textureCoordinates = [];
+        var faceMatches = [];
 
         var findColors = /c ([0-9]*) ([0-9]*) ([0-9]*)/gim;
         var findVertices = /v ([0-9\-.]*) ([0-9\-.]*) ([0-9\-.]*)/gim;
-        var findFaces = /f ([0-9\-.]*).*? ([0-9\-.]*).*? ([0-9\-.]*).*? ([0-9\-.]*)(.*)$/gim;
+        //var findFaces1 = /f ([0-9\-.]*).*? ([0-9\-.]*).*? ([0-9\-.]*).*? ([0-9\-.]*)(.*)$/gim;
+        var findFaces1 = /f ([0-9\-.]*) ([0-9\-.]*) ([0-9\-.]*) ([0-9\-.]*)(.*)$/gim;
+        var findFaces2 = /f ([0-9\-.]*).*?\/([0-9\-.]*).*? ([0-9\-.]*).*?\/([0-9\-.]*).*? ([0-9\-.]*).*?\/([0-9\-.]*).*? ([0-9\-.]*).*?\/([0-9\-.]*)(.*)$/gim;        
         var findFaceColor = /[0-9\/.]* ([0-9])$/;
+        var findTextureCoordinates = /vt ([0-9\-.]*) ([0-9\-.]*) ([0-9\-.]*)/gim;
 
         var matches = false;
 
@@ -2429,20 +2488,51 @@ css3d.elementFactory = {
             vertices.push([parseFloat(matches[1])*-1, parseFloat(matches[2]), parseFloat(matches[3])]);
         }
         
+        while (matches = findTextureCoordinates.exec(objContent)) {
+            textureCoordinates.push([parseFloat(matches[1]), parseFloat(matches[2]), parseFloat(matches[3])]);
+        }
+ 
         var elementGroup = new css3d.element();
 
         var count = 0;
+        
+        while (matches = findFaces1.exec(objContent)) {
+            faceMatches.push(matches);
+        }
+        
+        while (matches = findFaces2.exec(objContent)) {
+            faceMatches.push(matches);
+        }
 
-        while (matches = findFaces.exec(objContent)) {
+        var i=0
+        while (matches = faceMatches[i++]) {
             
             if (matches.length < 5) {
                 continue;
             }
-
-            var f0 = Math.abs(parseInt(matches[1]))-1;
-            var f1 = Math.abs(parseInt(matches[2]))-1;
-            var f2 = Math.abs(parseInt(matches[3]))-1;
-            var f3 = Math.abs(parseInt(matches[4]))-1;
+       
+            if (matches.length >= 9) {
+                var f0 = Math.abs(parseInt(matches[1]))-1;
+                var f1 = Math.abs(parseInt(matches[3]))-1;
+                var f2 = Math.abs(parseInt(matches[5]))-1;
+                var f3 = Math.abs(parseInt(matches[7]))-1;
+                
+                var ft0 = Math.abs(parseInt(matches[2]))-1;
+                var ft1 = Math.abs(parseInt(matches[4]))-1;
+                var ft2 = Math.abs(parseInt(matches[6]))-1;
+                var ft3 = Math.abs(parseInt(matches[8]))-1;
+                
+                var vt0 = new css3d.vector3(textureCoordinates[ft0][0], textureCoordinates[ft0][1], textureCoordinates[ft0][2]);
+                var vt1 = new css3d.vector3(textureCoordinates[ft1][0], textureCoordinates[ft1][1], textureCoordinates[ft1][2]);
+                var vt2 = new css3d.vector3(textureCoordinates[ft2][0], textureCoordinates[ft2][1], textureCoordinates[ft2][2]);
+                var vt3 = new css3d.vector3(textureCoordinates[ft3][0], textureCoordinates[ft3][1], textureCoordinates[ft3][2]);
+            }
+            else if (matches.length >= 5) {
+                var f0 = Math.abs(parseInt(matches[1]))-1;
+                var f1 = Math.abs(parseInt(matches[2]))-1;
+                var f2 = Math.abs(parseInt(matches[3]))-1;
+                var f3 = Math.abs(parseInt(matches[4]))-1;
+            }
                   
             var v0 = new css3d.vector3(vertices[f0][0], vertices[f0][1], vertices[f0][2]);
             var v1 = new css3d.vector3(vertices[f1][0], vertices[f1][1], vertices[f1][2]);
@@ -2474,8 +2564,8 @@ css3d.elementFactory = {
             ];
            
             // get dimension
-            var width = Math.sqrt(Math.pow(v2.x - v1.x, 2) + Math.pow(v2.y - v1.y, 2) + Math.pow(v2.z - v1.z, 2)).toFixed(2);            
-            var height = Math.sqrt(Math.pow(v1.x - v0.x, 2) + Math.pow(v1.y - v0.y, 2) + Math.pow(v1.z - v0.z, 2)).toFixed(2);                       
+            var width = Math.sqrt(Math.pow(v2.x - v1.x, 2) + Math.pow(v2.y - v1.y, 2) + Math.pow(v2.z - v1.z, 2)).toFixed(4);            
+            var height = Math.sqrt(Math.pow(v1.x - v0.x, 2) + Math.pow(v1.y - v0.y, 2) + Math.pow(v1.z - v0.z, 2)).toFixed(4);                       
 
             // get position
             var x = ((v0.x + v1.x + v2.x + v3.x) / 4.0);
@@ -2489,6 +2579,40 @@ css3d.elementFactory = {
             div.style.width = width+'px';
             div.style.height = height+'px';
             div.style.backgroundColor = '#ccc';
+            
+            // texture mapping
+            if (matches.length >= 9) {
+                var tx0 = vt0.x * textureSize;
+                var ty0 = textureSize - (vt0.y * textureSize); 
+                var tx1 = vt1.x * textureSize;
+                var ty1 = textureSize - (vt1.y * textureSize); 
+                var tx2 = vt2.x * textureSize;
+                var ty2 = textureSize - (vt2.y * textureSize); 
+                var tx3 = vt3.x * textureSize;
+                var ty3 = textureSize - (vt3.y * textureSize);
+       
+                var vWidth = tx3 - tx1;
+                if (vWidth < 0) {
+                    vWidth = tx1 - tx3;
+                    tx1 = tx2;
+                }                
+                var vHeight = ty3 - ty1;
+                if (vHeight < 0) {
+                    vHeight = ty1 - ty3;
+                    ty1 = ty2;
+                }
+                
+                var scaleX = width/vWidth;
+                var scaleY = height/vHeight;
+                
+                // TODO:
+                // there is a problem with texture rotation
+                // some elements are 90 or 180 degrees rotated
+                div.style.backgroundPosition = (-tx1*scaleX).toFixed(4)+'px '+(-ty1*scaleY).toFixed(4)+'px';
+                div.style.backgroundImage = 'url("'+textureFile+'")';
+                div.style.backgroundSize = (textureSize*scaleX).toFixed(4)+'px '+(textureSize*scaleY).toFixed(4)+'px';
+            }            
+            
             container.appendChild(div);
             
             var element = new css3d.element(div);
@@ -2496,14 +2620,13 @@ css3d.elementFactory = {
             element.shading = shading;
             element.setTranslation(x, y, z);
             element.setRotationMatrix(rotationMatrix);
-            //element.setScale(1, -1, 1);
             element.inheritScaling = true;            
             element.setParent(elementGroup);
             scene.addElement(element);
 
             count++;
-        }
-        
+        }        
+       
         console.log('obj file loaded. ' + count + ' faces');
         
         elementGroup.setScale(-1, -1, 1);        
@@ -3005,9 +3128,33 @@ css3d.quaternion = (function()
      */
     var quaternion = function(x, y, z, w)
     {
+        /**
+         * x value
+         * @type {Number}
+         * @memberof! css3d.quaternion
+         * @instance
+         */
         this.x = x || 0;
+        /**
+         * y value
+         * @type {Number}
+         * @memberof! css3d.quaternion
+         * @instance
+         */
         this.y = y || 0;
+        /**
+         * z value
+         * @type {Number}
+         * @memberof! css3d.quaternion
+         * @instance
+         */
         this.z = z || 0;
+        /**
+         * w value
+         * @type {Number}
+         * @memberof! css3d.quaternion
+         * @instance
+         */
         this.w = w || 1;
 
         this.TOLERANCE = 0.00001;
@@ -3502,8 +3649,26 @@ css3d.vector3 = (function(css3d)
      */
     var vector3 = function(x, y, z)
     {
+        /**
+         * x value
+         * @type {Number}
+         * @memberof! css3d.vector3
+         * @instance
+         */
         this.x = x || 0;
+        /**
+         * y value
+         * @type {Number}
+         * @memberof! css3d.vector3
+         * @instance
+         */ 
         this.y = y || 0;
+        /**
+         * z value
+         * @type {Number}
+         * @memberof! css3d.vector3
+         * @instance
+         */
         this.z = z || 0;
     };
     
@@ -3714,9 +3879,33 @@ css3d.vector4 = (function()
      */
     var vector4 = function(x, y, z, w)
     {
+        /**
+         * x value
+         * @type {Number}
+         * @memberof! css3d.vector4
+         * @instance
+         */
         this.x = x || 0;
+        /**
+         * y value
+         * @type {Number}
+         * @memberof! css3d.vector4
+         * @instance
+         */
         this.y = y || 0;
+        /**
+         * z value
+         * @type {Number}
+         * @memberof! css3d.vector4
+         * @instance
+         */
         this.z = z || 0;
+        /**
+         * w value
+         * @type {Number}
+         * @memberof! css3d.vector4
+         * @instance
+         */
         this.w = w || 1;
     };
 

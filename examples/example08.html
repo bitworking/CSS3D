@@ -19,8 +19,17 @@
         position: relative;
     }    
     
-    .model {
-        background-color: #FF7F00 !important;
+    .cube {
+        /*
+        background-image: url('../textures/2x_EscherCubeFish_1024.jpg');
+        background-size: 610px;
+        */
+        /*
+        One cube side is 200px
+        The texture side size is 336px
+        So 200/336*1024 = 610
+        */
+        
     }
 
     </style>
@@ -42,11 +51,13 @@
         var model = css3d.elementFactory.fromObj(
             document.getElementById('container'),
             scene, 
-            '../models/bitworking.obj', 
-            'model',    // class name
+            '../models/cube.obj', 
+            'cube',    // class name
             true,       // backface culling
             true,       // shading
-            true       // clockwise winding
+            true,       // clockwise winding,
+            '../textures/2x_EscherCubeFish_1024.jpg',
+            1024
         );
                 
         // add scene to engine
@@ -56,7 +67,7 @@
             alert('This browser does not support CSS 3D');
         }     
         
-        var axis = new css3d.vector3(0, 1, 0).normalize();
+        var axis = new css3d.vector3(1, 1, 0).normalize();
         var rotation = 0;   
         var rotationIncrement = 0.01;
      
@@ -67,13 +78,9 @@
 
         function updateScene(deltaTime)
         {          
-           //model.setRotation(axis, rotation);
-           model.setRotationXYZ(rotation, rotation, 0);
+           model.setRotation(axis, rotation);           
            rotation += rotationIncrement;
-           
-           if (rotation > (Math.PI / 8) || rotation < -(Math.PI / 8)) {
-               rotationIncrement = -rotationIncrement;
-           }
+
         }
 
         </script>

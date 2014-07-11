@@ -44,12 +44,39 @@ css3d.element = (function()
         this._isTranslated = false;
         this._isPivotChanged = false;
         
+        /**
+         * Set shading on/off
+         * @type {Boolean}
+         * @memberof! css3d.element
+         * @instance
+         */
         this.shading = true;
         this.backfaceCullingDirty = false;
         this.worldView = null;
         this.normal = new css3d.vector3(0, 0, 1);
+        
+        /**
+         * Indicates if the element inherits the scaling from an parent element.
+         * @type {Boolean}
+         * @memberof! css3d.element
+         * @instance
+         */
         this.inheritScaling = false;
+        
+        /**
+         * Element will get centered in the container element. This makes it easier to position it in 3D space.
+         * @type {Boolean}
+         * @memberof! css3d.element
+         * @instance
+         */
         this.autoCenter = true;
+        
+        /**
+         * Set the custom zIndex. Only used if browser doesn't support preserve-3d (IE10)
+         * @type {Integer}
+         * @memberof! css3d.element
+         * @instance
+         */
         this.zIndex = null;
     };
 

@@ -30,9 +30,33 @@ css3d.vector4 = (function()
      */
     var vector4 = function(x, y, z, w)
     {
+        /**
+         * x value
+         * @type {Number}
+         * @memberof! css3d.vector4
+         * @instance
+         */
         this.x = x || 0;
+        /**
+         * y value
+         * @type {Number}
+         * @memberof! css3d.vector4
+         * @instance
+         */
         this.y = y || 0;
+        /**
+         * z value
+         * @type {Number}
+         * @memberof! css3d.vector4
+         * @instance
+         */
         this.z = z || 0;
+        /**
+         * w value
+         * @type {Number}
+         * @memberof! css3d.vector4
+         * @instance
+         */
         this.w = w || 1;
     };
 

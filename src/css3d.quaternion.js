@@ -31,9 +31,33 @@ css3d.quaternion = (function()
      */
     var quaternion = function(x, y, z, w)
     {
+        /**
+         * x value
+         * @type {Number}
+         * @memberof! css3d.quaternion
+         * @instance
+         */
         this.x = x || 0;
+        /**
+         * y value
+         * @type {Number}
+         * @memberof! css3d.quaternion
+         * @instance
+         */
         this.y = y || 0;
+        /**
+         * z value
+         * @type {Number}
+         * @memberof! css3d.quaternion
+         * @instance
+         */
         this.z = z || 0;
+        /**
+         * w value
+         * @type {Number}
+         * @memberof! css3d.quaternion
+         * @instance
+         */
         this.w = w || 1;
 
         this.TOLERANCE = 0.00001;
