@@ -222,6 +222,11 @@ css3d.vector3 = (function(css3d)
     {
         return (this.x == 0 && this.y == 0 && this.z == 0);
     };
+    
+    vector3.prototype.distance = function(a, b)
+    {
+        return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2) + Math.pow(a.z - b.z, 2));
+    };
 
     return vector3;
 

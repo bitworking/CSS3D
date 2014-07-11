@@ -10,6 +10,7 @@
         margin: 0;
         font-family: sans-serif;
         overflow: hidden;
+        background-color: #000;
     }
     
     #container {
@@ -62,6 +63,11 @@
         
         var deltaTimeCounter = 0;
         var engineDeltaTime = 0;
+        
+        
+        // init collision
+        var collision = new css3d.collision(scene.getElements());
+        var collisionElements = [];
 
         engine.onRender = updateScene;
         engine.startRender();
@@ -70,7 +76,7 @@
         {         
             engineDeltaTime = deltaTime;
             scene.getCamera().getTranslation().y = 0;
-           
+
         }
         
         /* FPS camera *********************************************************/
@@ -94,21 +100,45 @@
                 // w
                 if (code == 87) {
                     scene.getCamera().forward(speed * engineDeltaTime);
+                    
+                    // collision
+                    collisionElements = collision.getCollisions(scene.getCamera().getTranslation(), scene.getCamera().forwardVector(), 20);
+                    if (collisionElements.length > 0) {
+                        scene.getCamera().forward(-speed * engineDeltaTime);
+                    }
                 }
                 // s
                 if (code == 83) {
                     scene.getCamera().forward(-speed * engineDeltaTime);
+                    
+                    // collision
+                    collisionElements = collision.getCollisions(scene.getCamera().getTranslation(), scene.getCamera().forwardVector(), 20);
+                    if (collisionElements.length > 0) {
+                        scene.getCamera().forward(speed * engineDeltaTime);
+                    }
                 }
                 // d
                 if (code == 68) {
                     scene.getCamera().left(-speed * engineDeltaTime);
+                    
+                    // collision
+                    collisionElements = collision.getCollisions(scene.getCamera().getTranslation(), scene.getCamera().forwardVector(), 20);
+                    if (collisionElements.length > 0) {
+                        scene.getCamera().left(speed * engineDeltaTime);
+                    }
                 }
                 // a
                 if (code == 65) {
                     scene.getCamera().left(speed * engineDeltaTime);
+                    
+                    // collision
+                    collisionElements = collision.getCollisions(scene.getCamera().getTranslation(), scene.getCamera().forwardVector(), 20);
+                    if (collisionElements.length > 0) {
+                        scene.getCamera().left(-speed * engineDeltaTime);
+                    }
                 }
 
-                
+                /*
                 // up
                 if (code == 38) {
                     scene.getCamera().up(speed * engineDeltaTime);
@@ -127,7 +157,8 @@
                     cameraRotationY += (0.2 * engineDeltaTime);
                     scene.getCamera().setRotation(cameraRotationAxis, cameraRotationY);
                 }
-       
+                */
+               
                 // f for fullscreen
                 if (code == 70) {
                     toggleFullScreen();

@@ -155,6 +155,17 @@ css3d.camera = (function()
     {        
         return css3d.matrix4.back(this._rotation).normalize();
     };
+    
+    /**
+     * 
+     * @memberof! css3d.camera
+     * @instance
+     * @returns {css3d.vector3}
+     */
+    camera.prototype.forwardVector = function()
+    {
+        return css3d.matrix4.forward(this._rotation).normalize();
+    };
 
     /**
      * Move camera forward
@@ -166,11 +177,11 @@ css3d.camera = (function()
      */
     camera.prototype.forward = function(steps)
     {
-        var backVector = this.backVector();
+        var forwardVector = this.forwardVector();
         this.setTranslation(
-            this._translation.x - (backVector.x * steps),
-            this._translation.y - (backVector.y * steps),
-            this._translation.z - (backVector.z * steps)
+            this._translation.x + (forwardVector.x * steps),
+            this._translation.y + (forwardVector.y * steps),
+            this._translation.z + (forwardVector.z * steps)
         );
         return this;
     };
