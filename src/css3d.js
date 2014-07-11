@@ -307,8 +307,9 @@ var css3d = (function(document)
 
         // shading
         if (element.shading) {
-            var projected = element.normal.transform(element.getTotalRotation());
-            projected = projected.toVector3().normalize();
+            //var projected = element.normal.transform(element.getTotalRotation());
+            //projected = projected.toVector3().normalize();
+            var projected = element.normalWorld;            
             var dot = Math.abs(projected.dot(this._scene.getLight())).toFixed(10);
             dot = dot * this._scene.getShadingIntensity() + (1-this._scene.getShadingIntensity());
             if (this._hasFilter) {

@@ -193,6 +193,16 @@ css3d.matrix4 = {
     {
         return new css3d.vector3(matrix[2], matrix[6], matrix[10]);
     },
+    
+    /**
+     * 
+     * @param {Array} matrix
+     * @returns {css3d.vector3}
+     */
+    forward : function(matrix)
+    {
+        return new css3d.vector3(-matrix[2], -matrix[6], -matrix[10]);
+    },
 
     /**
      * 

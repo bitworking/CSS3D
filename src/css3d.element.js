@@ -54,6 +54,7 @@ css3d.element = (function()
         this.backfaceCullingDirty = false;
         this.worldView = null;
         this.normal = new css3d.vector3(0, 0, 1);
+        this.normalWorld = new css3d.vector3(0, 0, 1);
         
         /**
          * Indicates if the element inherits the scaling from an parent element.
@@ -448,6 +449,17 @@ css3d.element = (function()
     {
         return this._translation;
     };
+    
+    /**
+     * 
+     * @memberof! css3d.element
+     * @instance
+     * @returns {css3d.vector3}
+     */
+    element.prototype.getTotalTranslation = function()
+    {
+        return new css3d.vector3(this._world[3], this._world[7], this._world[11]);
+    };
 
     /**
      * 
@@ -458,6 +470,17 @@ css3d.element = (function()
     element.prototype.backVector = function()
     {
         return css3d.matrix4.back(this._world).normalize();        
+    };
+    
+    /**
+     * 
+     * @memberof! css3d.element
+     * @instance
+     * @returns {css3d.vector3}
+     */
+    element.prototype.forwardVector = function()
+    {
+        return css3d.matrix4.forward(this._world).normalize();        
     };
 
     /**
@@ -470,11 +493,11 @@ css3d.element = (function()
      */
     element.prototype.forward = function(steps)
     {
-        var backVector = this.backVector();
+        var forwardVector = this.forwardVector();
         this.setTranslation(
-            this._translation.x - (backVector.x * steps),
-            this._translation.y - (backVector.y * steps),
-            this._translation.z - (backVector.z * steps)
+            this._translation.x + (forwardVector.x * steps),
+            this._translation.y + (forwardVector.y * steps),
+            this._translation.z + (forwardVector.z * steps)
         );
         return this;
     };
@@ -720,6 +743,11 @@ css3d.element = (function()
                 this._parent.update(); // this seems to be needed if you only call engine.update().render()
                 this._world = css3d.matrix4.multiply(this._parent.getWorldMatrix(), this._world);
             }
+            
+            // transform normal
+            // isn't it always the forward vector?
+            this.normalWorld = this.normal.transform(this.getTotalRotation());
+            this.normalWorld = this.normalWorld.toVector3().normalize();
 
             this._isDirty = false;
 
