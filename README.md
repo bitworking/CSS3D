@@ -30,7 +30,7 @@ engine.update().render();
 * Build scene from json
 * Depth cueing
 * Animation system
-* Use textures/uvw coordinates from obj file
+* ~~Use textures/uvw coordinates from obj file~~
 * Billboard element
 * Speed/memory optimization
 
